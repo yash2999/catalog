@@ -51,7 +51,6 @@ public class ProductController {
     public ResponseEntity<ProductDto> find(@PathVariable("id") String id) {
         Mono<Product> product = repo.findById(id);
         ProductDto dto = new ProductDto(product);
-        Mono.from();
         return new ResponseEntity<ProductDto>(dto, HttpStatus.OK);
     }
 

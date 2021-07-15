@@ -7,7 +7,7 @@ public class ProductDto {
     private String sellerName;
 
     public ProductDto(Mono<Product> product) {
-//        System.console().printf(product.subscribe());
+        Product productTemp = product.block();
         this.sellerName = productTemp.getSellerName();
         this.productName = productTemp.getProductName();
         this.category = productTemp.getCategory();
