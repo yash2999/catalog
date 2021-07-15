@@ -1,16 +1,18 @@
 package com.flipkart.dto;
 
 import com.flipkart.domain.Product;
+import reactor.core.publisher.Mono;
 
 public class ProductDto {
     private String sellerName;
 
-    public ProductDto(Product employee) {
-        this.sellerName = employee.getSellerName();
-        this.productName = employee.getProductName();
-        this.category = employee.getCategory();
-        this.description = employee.getDescription();
-        this.cost = employee.getCost();
+    public ProductDto(Mono<Product> product) {
+//        System.console().printf(product.subscribe());
+        this.sellerName = productTemp.getSellerName();
+        this.productName = productTemp.getProductName();
+        this.category = productTemp.getCategory();
+        this.description = productTemp.getDescription();
+        this.cost = productTemp.getCost();
     }
 
     public void setProductName(String productName) {
@@ -18,6 +20,8 @@ public class ProductDto {
     }
 
     private String productName;
+
+    private String id;
 
     private String category;
 

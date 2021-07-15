@@ -11,6 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.validation.Valid;
@@ -38,22 +40,25 @@ public class ProductController {
 
     @PostMapping("/product")
     public ResponseEntity<ProductDto> create(@Valid @RequestBody Product product) {
-        Product entity = repo.save(product);
+        Mono<Product> entity = repo.save(product);
+
+        return entity;
 
         return new ResponseEntity<ProductDto>(new ProductDto(entity), HttpStatus.CREATED);
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<ProductDto> find(@PathVariable("id") int id) {
-        Product employee = repo.findById(id).orElseThrow(() -> new ProductNotFoundException());
-        ProductDto dto = new ProductDto(employee);
+    public ResponseEntity<ProductDto> find(@PathVariable("id") String id) {
+        Mono<Product> product = repo.findById(id);
+        ProductDto dto = new ProductDto(product);
+        Mono.from();
         return new ResponseEntity<ProductDto>(dto, HttpStatus.OK);
     }
 
     @GetMapping("/product")
-    public ResponseEntity<List<ProductDto>> search(@RequestParam(value = "category", required = false, defaultValue = "") String category,
+    public Flux<Product> search(@RequestParam(value = "category", required = false, defaultValue = "") String category,
                                                 @RequestParam(value = "order", required = false) Integer order) {
-        List<Product> product;
+        Flux<Product> product;
         if (category == "") {
             if (order == 1) {
                 product = repo.findAllByOrderByCostAsc();
@@ -69,8 +74,10 @@ public class ProductController {
             product = repo.findByCategoryIgnoreCaseContainingOrderByCostDesc(category);
         else product = repo.findByCategoryIgnoreCaseContaining(category);
 
-        List<ProductDto> dto = product.stream().map(k -> new ProductDto(k)).collect(Collectors.toList());
-        return new ResponseEntity<List<ProductDto>>(dto, HttpStatus.OK);
+        return product;
+
+//        List<ProductDto> dto = product.stream().map(k -> new ProductDto(k)).collect(Collectors.toList());
+//        return new ResponseEntity<List<ProductDto>>(dto, HttpStatus.OK);
     }
 
     @ExceptionHandler({ MethodArgumentNotValidException.class })
@@ -84,9 +91,9 @@ public class ProductController {
         return new ResponseEntity<Error>(error, HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler({ RuntimeException.class })
-//    public ResponseEntity<String> handleEmployeeNotFoundException(ProductNotFoundException ex) {
-//        return new ResponseEntity<String>("Employee Not Found", HttpStatus.NOT_FOUND);
-//    }
+    @ExceptionHandler({ RuntimeException.class })
+    public ResponseEntity<String> handleEmployeeNotFoundException(ProductNotFoundException ex) {
+        return new ResponseEntity<String>("Product Not Found", HttpStatus.NOT_FOUND);
+    }
 
 }

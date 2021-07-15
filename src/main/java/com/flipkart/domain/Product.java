@@ -1,15 +1,14 @@
 package com.flipkart.domain;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
-@Entity
+@Document
 public class Product {
     @Id
-    @GeneratedValue
-    private int id;
+    private String id;
 
     @Pattern(regexp = "^[a-zA-Z]+(\\s[a-zA-Z]+)?$")
     @NotEmpty
@@ -35,11 +34,11 @@ public class Product {
 
     private long cost;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

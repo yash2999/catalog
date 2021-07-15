@@ -1,19 +1,21 @@
 package com.flipkart.data;
 
 import com.flipkart.domain.Product;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Integer> {
-    List<Product> findByCategoryIgnoreCaseContainingOrderByCost(String category);
-    List<Product> findByCategoryIgnoreCaseContaining(String category);
+public interface ProductRepository extends ReactiveMongoRepository<Product, String> {
+    Flux<Product> findByCategoryIgnoreCaseContainingOrderByCost(String category);
+    Flux<Product> findByCategoryIgnoreCaseContaining(String category);
 
-    List<Product> findByCategoryIgnoreCaseContainingOrderByCostDesc(String category);
+    Flux<Product> findByCategoryIgnoreCaseContainingOrderByCostDesc(String category);
 
-    List<Product> findAllByOrderByCostAsc();
+    Flux<Product> findAllByOrderByCostAsc();
 
-    List<Product> findAllByOrderByCostDesc();
+    Flux<Product> findAllByOrderByCostDesc();
+
+    Mono<Product> findById(String id);
 }
