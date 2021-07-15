@@ -42,7 +42,7 @@ public class ProductController {
     public ResponseEntity<ProductDto> create(@Valid @RequestBody Product product) {
         Mono<Product> entity = repo.save(product);
 
-        return entity;
+//        return entity;
 
         return new ResponseEntity<ProductDto>(new ProductDto(entity), HttpStatus.CREATED);
     }
